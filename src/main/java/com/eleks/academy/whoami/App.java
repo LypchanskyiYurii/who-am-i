@@ -10,23 +10,27 @@ import com.eleks.academy.whoami.networking.server.ServerImpl;
 
 public class App {
 
+	public static BufferedReader reader;
+
 	public static void main(String[] args) throws IOException {
 
 		ServerImpl server = new ServerImpl(888);
 
 		Game game = server.startGame();
 
-		var socket = server.waitForPlayer(game);
+		var sockets = server.waitForPlayer(game);
+		for (var socket : sockets) {
 
-		BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+			BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
-		boolean gameStatus = true;
+			var playerName = reader.readLine();
 
-		var playerName = reader.readLine();
-
-		server.addPlayer(new ClientPlayer(playerName, socket));
+			server.addPlayer(new ClientPlayer(playerName, socket));
+		}
 
 		game.assignCharacters();
+
+		boolean gameStatus = true;
 
 		game.initGame();
 
@@ -40,7 +44,7 @@ public class App {
 			gameStatus = !game.isFinished();
 		}
 
-		server.stopServer(socket, reader);
+		server.stopServer(sockets, reader);
 	}
 
 }

@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.eleks.academy.whoami.core.Game;
@@ -13,9 +14,9 @@ import com.eleks.academy.whoami.core.impl.RandomPlayer;
 
 public class ServerImpl implements Server {
 
-	private List<String> characters = List.of("Batman", "Superman");
-	private List<String> questions = List.of("Am i a human?", "Am i a character from a movie?");
-	private List<String> guessess = List.of("Batman", "Superman");
+	private List<String> characters = List.of("Batman", "Superman", "Gladiator", "Tor");
+	private List<String> questions = List.of("Am i a human? ", "Am i a character from a movie? ");
+	private List<String> guessess = List.of("Batman", "Superman", "Gladiator", "Tor");
 
 	private RandomGame game = new RandomGame(characters);
 
@@ -34,8 +35,11 @@ public class ServerImpl implements Server {
 	}
 
 	@Override
-	public Socket waitForPlayer(Game game) throws IOException {
-		return serverSocket.accept();
+	public List<Socket> waitForPlayer(Game game) throws IOException {
+		List<Socket> listPlayer = new ArrayList<>();
+		for (int i = 0; i <= 3; i++)
+			listPlayer.add(serverSocket.accept());
+		return listPlayer;
 	}
 
 	@Override
@@ -46,8 +50,14 @@ public class ServerImpl implements Server {
 	}
 
 	@Override
-	public void stopServer(Socket clientSocket, BufferedReader reader) throws IOException {
-		clientSocket.close();
+	public void stopServer(List<Socket> clientSocket, BufferedReader reader) throws IOException {
+		clientSocket.forEach(s -> {
+			try {
+				s.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		});
 		reader.close();
 	}
 
