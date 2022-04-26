@@ -14,9 +14,9 @@ import com.eleks.academy.whoami.core.impl.RandomPlayer;
 
 public class ServerImpl implements Server {
 
-	private List<String> characters = List.of("Batman", "Superman");
-	private List<String> questions = List.of("Am i a human?", "Am i a character from a movie?");
-	private List<String> guessess = List.of("Batman", "Superman");
+	private List<String> characters = List.of("Batman", "Superman", "Tor", "Gladiator");
+	private List<String> questions = List.of("Am i a human?", "Am i a character from a movie? ");
+	private List<String> guessess = List.of("Batman", "Superman", "Tor", "Gladiator");
 
 	private RandomGame game = new RandomGame(characters);
 
