@@ -5,24 +5,52 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.net.Socket;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import com.eleks.academy.whoami.core.Player;
 
-public class ClientPlayer implements Player {
+public class ClientPlayer implements Player, AutoCloseable {
 
+<<<<<<< HEAD
 	private String name;
 	private BufferedReader reader;
 	private PrintStream writer;
 
 	public ClientPlayer(String name, Socket socket) throws IOException {
 		this.name = name;
+=======
+	private final BufferedReader reader;
+	private final PrintStream writer;
+	private final Socket socket;
+
+	private final ExecutorService executor = Executors.newSingleThreadExecutor();
+
+	public ClientPlayer(Socket socket) throws IOException {
+		this.socket = socket;
+>>>>>>> 86e2147a1480be5896307595e1a5943cdaceccfa
 		this.reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 		this.writer = new PrintStream(socket.getOutputStream());
 	}
 
 	@Override
-	public String getName() {
-		return this.name;
+	public Future<String> getName() {
+		// TODO: save name for future
+		return executor.submit(this::askName);
+	}
+
+	private String askName() {
+		String name = "";
+
+		try {
+			writer.println("Please, name yourself.");
+			name = reader.readLine();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return name;
 	}
 
 	@Override
@@ -95,4 +123,44 @@ public class ClientPlayer implements Player {
 		return answer;
 	}
 
+<<<<<<< HEAD
 }
+=======
+	@Override
+	public Future<String> suggestCharacter() {
+		return executor.submit(this::doSuggestCharacter);
+	}
+
+	private String doSuggestCharacter() {
+		try {
+			return reader.readLine();
+		} catch (IOException e) {
+			e.printStackTrace();
+			return "";
+		}
+	}
+
+	@Override
+	public void close() {
+		executor.shutdown();
+		try {
+			executor.awaitTermination(5, TimeUnit.SECONDS);
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+		}
+		close(writer);
+		close(reader);
+		close(socket);
+	}
+	
+	private void close(AutoCloseable closeable) {
+		try {
+			closeable.close();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+}
+>>>>>>> 86e2147a1480be5896307595e1a5943cdaceccfa

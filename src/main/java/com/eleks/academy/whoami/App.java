@@ -1,20 +1,29 @@
 package com.eleks.academy.whoami;
 
-import java.io.BufferedReader;
 import java.io.IOException;
+<<<<<<< HEAD
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+=======
+>>>>>>> 86e2147a1480be5896307595e1a5943cdaceccfa
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
+import com.eleks.academy.whoami.configuration.ContextConfig;
+import com.eleks.academy.whoami.configuration.ServerProperties;
 import com.eleks.academy.whoami.core.Game;
 import com.eleks.academy.whoami.networking.client.ClientPlayer;
+import com.eleks.academy.whoami.networking.server.Server;
 import com.eleks.academy.whoami.networking.server.ServerImpl;
 
 public class App {
 
 	public static void main(String[] args) throws IOException {
+<<<<<<< HEAD
 		int players = readPlayersArg(args);
 
 		ServerImpl server = new ServerImpl(888);
@@ -82,6 +91,14 @@ public class App {
 				return 2;
 			}
 		}
+=======
+		ApplicationContext context = new AnnotationConfigApplicationContext(ContextConfig.class);
+		ServerProperties properties = context.getBean(ServerProperties.class);
+		Server server = context.getBean(Server.class);
+
+		Game game = server.startGame();
+		game.play();
+>>>>>>> 86e2147a1480be5896307595e1a5943cdaceccfa
 	}
 
 }
