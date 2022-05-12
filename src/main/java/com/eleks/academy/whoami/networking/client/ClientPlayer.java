@@ -11,11 +11,13 @@ import com.eleks.academy.whoami.core.Player;
 public class ClientPlayer implements Player {
 
 	private String name;
+	private Socket socket;
 	private BufferedReader reader;
 	private PrintStream writer;
 
 	public ClientPlayer(String name, Socket socket) throws IOException {
 		this.name = name;
+		this.socket = socket;
 		this.reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 		this.writer = new PrintStream(socket.getOutputStream());
 	}
@@ -39,11 +41,11 @@ public class ClientPlayer implements Player {
 	}
 
 	@Override
-	public String answerQuestion(String name, String question, String character) {
+	public String answerQuestion(String question, String character) {
 		String answer = "";
 		
 		try {
-			writer.println(name + "Answer second player question: " + question + "Character is:"+ character);
+			writer.println("Answer second player question: " + question + "Character is:"+ character);
 			answer = reader.readLine();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -82,11 +84,11 @@ public class ClientPlayer implements Player {
 	}
 
 	@Override
-	public String answerGuess(String name, String guess, String character) {
+	public String answerGuess(String guess, String character) {
 		String answer = "";
 		
 		try {
-			writer.println(name + " answer: I think it is " + guess + ". That is true?   Yes/No");
+			writer.println("Write your answer: ");
 			answer = reader.readLine();
 		} catch (IOException e) {
 
