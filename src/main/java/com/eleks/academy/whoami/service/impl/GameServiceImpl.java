@@ -1,6 +1,6 @@
 package com.eleks.academy.whoami.service.impl;
 
-import com.eleks.academy.whoami.core.Game;
+import com.eleks.academy.whoami.core.SynchronousGame;
 import com.eleks.academy.whoami.core.impl.Answer;
 import com.eleks.academy.whoami.core.impl.PersistentGame;
 import com.eleks.academy.whoami.core.impl.StartGameAnswer;
@@ -43,7 +43,7 @@ public class GameServiceImpl implements GameService {
 	@Override
 	public void enrollToGame(String id, String player) {
 		this.gameRepository.findById(id)
-				.filter(Game::isAvailable)
+				.filter(SynchronousGame::isAvailable)
 				.ifPresentOrElse(
 						game -> game.makeTurn(new Answer(player)),
 						() -> {
@@ -55,24 +55,20 @@ public class GameServiceImpl implements GameService {
 	@Override
 	public Optional<GameDetails> findByIdAndPlayer(String id, String player) {
 		return this.gameRepository.findById(id)
-				.filter(game -> game.hasPlayer(player))
+				.filter(game -> game.findPlayer(player).isPresent())
 				.map(GameDetails::of);
 	}
 
 	@Override
 	public void suggestCharacter(String id, String player, CharacterSuggestion suggestion) {
 		this.gameRepository.findById(id)
-				.filter(game -> game.hasPlayer(player))
-				.ifPresentOrElse(
-						game -> game.makeTurn(new Answer(player, suggestion.getCharacter())),
-						() -> {
-							throw new ResponseStatusException(HttpStatus.NOT_FOUND, HttpStatus.NOT_FOUND.getReasonPhrase());
-						});
+				.flatMap(game -> game.findPlayer(player))
+				.ifPresent(p -> p.setCharacter(suggestion.getCharacter()));
 	}
 
 	@Override
 	public Optional<GameDetails> startGame(String id, String player) {
-		UnaryOperator<Game> startGame = game -> {
+		UnaryOperator<SynchronousGame> startGame = game -> {
 			game.makeTurn(new StartGameAnswer(player));
 
 			return game;

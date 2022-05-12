@@ -1,6 +1,6 @@
 package com.eleks.academy.whoami.core.state;
 
-import com.eleks.academy.whoami.core.Player;
+import com.eleks.academy.whoami.core.SynchronousPlayer;
 import com.eleks.academy.whoami.core.exception.GameException;
 import com.eleks.academy.whoami.core.impl.Answer;
 import com.eleks.academy.whoami.core.impl.GameCharacter;
@@ -19,11 +19,11 @@ public final class SuggestingCharacters extends AbstractGameState {
 
 	private final Lock lock = new ReentrantLock();
 
-	private final Map<String, Player> players;
+	private final Map<String, SynchronousPlayer> players;
 	private final Map<String, List<GameCharacter>> suggestedCharacters;
 	private final Map<String, String> playerCharacterMap;
 
-	public SuggestingCharacters(Map<String, Player> players) {
+	public SuggestingCharacters(Map<String, SynchronousPlayer> players) {
 		super(players.size(), players.size());
 
 		this.players = players;
@@ -42,7 +42,7 @@ public final class SuggestingCharacters extends AbstractGameState {
 		return Optional.of(this)
 				.filter(SuggestingCharacters::finished)
 				.map(SuggestingCharacters::assignCharacters)
-				.map(then -> new ProcessingQuestion(this.playerCharacterMap))
+				.map(then -> new ProcessingQuestion(this.players))
 				.orElseThrow(() -> new GameException("Cannot start game"));
 	}
 
@@ -63,8 +63,8 @@ public final class SuggestingCharacters extends AbstractGameState {
 	}
 
 	@Override
-	public boolean hasPlayer(String player) {
-		return this.players.containsKey(player);
+	public Optional<SynchronousPlayer> findPlayer(String player) {
+		return Optional.ofNullable(this.players.get(player));
 	}
 
 	// TODO: Consider extracting into {@link GameState}
