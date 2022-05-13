@@ -18,7 +18,6 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.UnaryOperator;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -30,7 +29,7 @@ public class GameServiceImpl implements GameService {
 	public List<GameLight> findAvailableGames(String player) {
 		return this.gameRepository.findAllAvailable(player)
 				.map(GameLight::of)
-				.collect(Collectors.toList());
+				.toList();
 	}
 
 	@Override

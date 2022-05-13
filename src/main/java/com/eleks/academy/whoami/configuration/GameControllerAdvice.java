@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import java.util.ArrayList;
-import java.util.List;
+import static java.util.stream.Collectors.collectingAndThen;
+import static java.util.stream.Collectors.toList;
 
 @RestControllerAdvice
 public class GameControllerAdvice extends ResponseEntityExceptionHandler {
@@ -30,11 +30,13 @@ public class GameControllerAdvice extends ResponseEntityExceptionHandler {
 	protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
 																  HttpHeaders headers, HttpStatus status,
 																  WebRequest request) {
-		List<String> details = new ArrayList<>();
-		for (ObjectError error : ex.getBindingResult().getAllErrors()) {
-			details.add(error.getDefaultMessage());
-		}
-		return new ResponseEntity<>(new ErrorResponse("Validation failed!", details), HttpStatus.BAD_REQUEST);
+		return ex.getBindingResult().getAllErrors()
+				.stream()
+				.map(ObjectError::getDefaultMessage)
+				.collect(collectingAndThen(
+						toList(),
+						details -> ResponseEntity.badRequest()
+								.body(new ErrorResponse("Validation failed!", details))
+				));
 	}
-
 }

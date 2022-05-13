@@ -19,7 +19,7 @@ public final class WaitingForPlayers extends AbstractGameState {
 	}
 
 	private WaitingForPlayers(int maxPlayers, Map<String, SynchronousPlayer> players) {
-		super(0, maxPlayers);
+		super(players.size(), maxPlayers);
 		this.players = players;
 	}
 
@@ -36,10 +36,10 @@ public final class WaitingForPlayers extends AbstractGameState {
 		} else {
 			nextPlayers.put(answer.getPlayer(), new PersistentPlayer(answer.getPlayer()));
 		}
-		if (players.size() == maxPlayers) {
+		if (players.size() == getMaxPlayers()) {
 			return new SuggestingCharacters(players);
 		} else {
-			return new WaitingForPlayers(maxPlayers, nextPlayers);
+			return new WaitingForPlayers(getMaxPlayers(), nextPlayers);
 		}
 	}
 

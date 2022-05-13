@@ -80,7 +80,7 @@ public class ClientPlayer implements Player {
 			e.printStackTrace();
 		}
 		
-		return answer.equals("Yes") ? true : false;
+		return answer.equals("Yes");
 	}
 
 	@Override

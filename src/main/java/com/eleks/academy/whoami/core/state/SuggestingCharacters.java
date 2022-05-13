@@ -6,7 +6,15 @@ import com.eleks.academy.whoami.core.impl.Answer;
 import com.eleks.academy.whoami.core.impl.GameCharacter;
 import com.eleks.academy.whoami.core.impl.StartGameAnswer;
 
-import java.util.*;
+import java.util.Map;
+import java.util.List;
+import java.util.HashMap;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Collection;
+import java.util.Comparator;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.BiFunction;
@@ -52,7 +60,7 @@ public final class SuggestingCharacters extends AbstractGameState {
 
 		try {
 			return Optional.of(answer)
-					.filter(a -> a instanceof StartGameAnswer)
+					.filter(StartGameAnswer.class::isInstance)
 					.map(StartGameAnswer.class::cast)
 					.map(then -> this.next())
 					.orElseGet(() -> this.suggestCharacter(answer.getPlayer(), answer.getMessage()));

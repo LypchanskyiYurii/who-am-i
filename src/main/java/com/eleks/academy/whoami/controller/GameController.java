@@ -51,7 +51,6 @@ public class GameController {
 
 	// TODO: Should return enrolled player
 	@PostMapping("/{id}/players")
-	@ResponseStatus(HttpStatus.OK)
 	public void enrollToGame(@PathVariable("id") String id,
 							 @RequestHeader(PLAYER) String player) {
 		this.gameService.enrollToGame(id, player);

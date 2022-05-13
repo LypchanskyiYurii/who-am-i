@@ -8,8 +8,8 @@ import lombok.RequiredArgsConstructor;
 public abstract sealed class AbstractGameState implements GameState
 		permits SuggestingCharacters, WaitingForPlayers, ProcessingQuestion {
 
-	protected final int playersInGame;
-	protected final int maxPlayers;
+	private final int playersInGame;
+	private final int maxPlayers;
 
 	// TODO: Implement for each state
 	@Override
