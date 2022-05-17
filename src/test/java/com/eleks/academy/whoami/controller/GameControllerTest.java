@@ -15,6 +15,8 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.util.Optional;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -33,6 +35,7 @@ class GameControllerTest {
 	private final GameController gameController = new GameController(gameService);
 	private final NewGameRequest gameRequest = new NewGameRequest();
 	private MockMvc mockMvc;
+	private final String id = "33333";
 
 	@BeforeEach
 	public void setMockMvc() {
@@ -84,7 +87,7 @@ class GameControllerTest {
 
 	@Test
 	void suggestCharacter() throws Exception {
-		doNothing().when(gameService).suggestCharacter(eq("1234"), eq("player"), any(CharacterSuggestion.class));
+		doNothing().when(gameService).suggestCharacter(eq(id), eq("player"), any(CharacterSuggestion.class));
 		this.mockMvc.perform(
 						MockMvcRequestBuilders.post("/games/1234/characters")
 								.header("X-Player", "player")
@@ -93,6 +96,72 @@ class GameControllerTest {
 										"    \"character\": \" char\"\n" +
 										"}"))
 				.andExpect(status().isOk());
-		verify(gameService, times(1)).suggestCharacter(eq("1234"), eq("player"), any(CharacterSuggestion.class));
+		verify(gameService, times(1)).suggestCharacter(eq(id), eq("player"), any(CharacterSuggestion.class));
+	}
+
+	@Test
+	void suggestCharacterFailedWithException() throws Exception {
+		doNothing().when(gameService).suggestCharacter(eq(id), eq("player"), any(CharacterSuggestion.class));
+		this.mockMvc.perform(
+						MockMvcRequestBuilders.post("/games/1234/characters")
+								.header("X-Player", "player")
+								.contentType(MediaType.APPLICATION_JSON)
+								.content("{\n" +
+										"    \"character\":\"   \"\n" +
+										"}"))
+				.andExpect(status().isBadRequest())
+				.andExpect(content().string("{\"message\":\"Validation failed!\",\"details\":[\"must not be blank\"]}"));
+	}
+
+	@Test
+	void enrollToGame() throws Exception {
+		doNothing().when(gameService).enrollToGame(eq(id), eq("player"));
+
+		mockMvc.perform(
+				MockMvcRequestBuilders.post("/games/{id}/players", id)
+								.header("X-Player", "player")
+								.contentType(MediaType.APPLICATION_JSON))
+								.andExpect(status().isOk());
+
+		verify(gameService, times(1)).enrollToGame(eq(id), eq("player"));
+	}
+
+	@Test
+	void findById() throws Exception {
+		GameDetails gameDetails = new GameDetails();
+		gameDetails.setId(id);
+
+		Optional<GameDetails> details = Optional.of(gameDetails);
+
+		when(gameService.findByIdAndPlayer(gameDetails.getId(), "player")).thenReturn(details);
+
+		mockMvc.perform(
+				MockMvcRequestBuilders.get("/games/{id}", gameDetails.getId())
+								.header("X-Player", "player")
+								.contentType(MediaType.APPLICATION_JSON))
+								.andExpect(status().isOk())
+								.andExpect(jsonPath("id").value(details.get().getId()));
+
+		verify(gameService, times(1)).findByIdAndPlayer(details.get().getId(), "player");
+	}
+
+	@Test
+	void startGame() throws Exception {
+		GameDetails gameDetails = new GameDetails();
+		gameDetails.setId(id);
+
+		Optional<GameDetails> details = Optional.of(gameDetails);
+
+		when(gameService.startGame(eq(details.get().getId()), eq("player"))).thenReturn(details);
+
+		mockMvc.perform(
+				MockMvcRequestBuilders.post("/games/{id}", details.get().getId())
+								.header("X-Player", "player")
+								.contentType(MediaType.APPLICATION_JSON))
+								.andExpect(status().isOk())
+								.andExpect(jsonPath("id").value(details.get().getId()));
+
+		verify(gameService, times(1)).startGame(eq(details.get().getId()), eq("player"));
 	}
 }
+
