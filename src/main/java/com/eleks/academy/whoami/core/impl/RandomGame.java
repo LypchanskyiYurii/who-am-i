@@ -14,7 +14,6 @@ import java.util.stream.Collectors;
 import com.eleks.academy.whoami.core.Game;
 import com.eleks.academy.whoami.core.Player;
 import com.eleks.academy.whoami.core.Turn;
-import com.eleks.academy.whoami.networking.client.ClientPlayer;
 
 public class RandomGame implements Game {
 
@@ -25,6 +24,7 @@ public class RandomGame implements Game {
 	private final List<Player> players;
 	private final List<String> availableCharacters;
 	private Turn currentTurn;
+
 
 	private final static String YES = "Yes";
 	private final static String NO = "No";
@@ -67,6 +67,7 @@ public class RandomGame implements Game {
 			answers = currentTurn.getOtherPlayers().stream()
 					.map(player -> player.answerGuess(guess, this.playersCharacter.get(guessersName)))
 					.collect(Collectors.toSet());
+
 			long positiveCount = answers.stream().filter(a -> YES.equals(a)).count();
 			long negativeCount = answers.stream().filter(a -> NO.equals(a)).count();
 
@@ -84,6 +85,7 @@ public class RandomGame implements Game {
 					.collect(Collectors.toSet());
 			long positiveCount = answers.stream().filter(a -> YES.equals(a)).count();
 			long negativeCount = answers.stream().filter(a -> NO.equals(a)).count();
+		
 			return positiveCount > negativeCount;
 		}
 
@@ -128,14 +130,10 @@ public class RandomGame implements Game {
 		this.currentTurn.changeTurn();
 	}
 
-	<<<<<<<HEAD
-
-}=======
-
 	@Override
 	public void play() {
 		boolean gameStatus = true;
-		
+
 		while (gameStatus) {
 			boolean turnResult = this.makeTurn();
 
@@ -147,4 +145,3 @@ public class RandomGame implements Game {
 		}
 	}
 
-}>>>>>>>86e2147 a1480be5896307595e1a5943cdaceccfa

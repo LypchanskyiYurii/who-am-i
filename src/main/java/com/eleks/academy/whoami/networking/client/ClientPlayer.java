@@ -15,6 +15,7 @@ import com.eleks.academy.whoami.core.Player;
 
 public class ClientPlayer implements Player, AutoCloseable {
 
+
 	private String name;
 	private BufferedReader reader;
 	private PrintStream writer;
@@ -60,10 +61,10 @@ public class ClientPlayer implements Player, AutoCloseable {
     }
 
 	@Override
+
 	public Future<String> answerQuestion(String question, String character) {
 		Callable<String> answerQuestion = () -> {
 			String answer = "";
-
 		try {
 			writer.println("Answer second player question: " + question + "Character is:" + character);
 			answer = reader.readLine();
@@ -80,7 +81,6 @@ public class ClientPlayer implements Player, AutoCloseable {
 	public Future<String> getGuess() {
 		 Callable<String> guess = () -> {
 		String answer = "";
-
 		try {
 			writer.println("Write your guess: ");
 			answer = reader.readLine();
@@ -105,9 +105,10 @@ public class ClientPlayer implements Player, AutoCloseable {
 			e.printStackTrace();
 		}
 
+
 		return answer.equals("Yes") ? true : false;
 		 };
-	        return executor.submit(isReadyForGuess);
+	      return executor.submit(isReadyForGuess);
 	}
 
 	@Override
@@ -126,7 +127,6 @@ public class ClientPlayer implements Player, AutoCloseable {
 		 };
 	        return executor.submit(answerGuess);
 	}
-
 
 	@Override
 	public Future<String> suggestCharacter() {
