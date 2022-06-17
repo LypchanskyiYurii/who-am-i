@@ -1,11 +1,11 @@
 package com.eleks.academy.whoami.controller;
 
-import com.eleks.academy.whoami.core.SynchronousPlayer;
 import com.eleks.academy.whoami.model.request.CharacterSuggestion;
 import com.eleks.academy.whoami.model.request.Message;
 import com.eleks.academy.whoami.model.request.NewGameRequest;
 import com.eleks.academy.whoami.model.response.GameDetails;
 import com.eleks.academy.whoami.model.response.GameLight;
+import com.eleks.academy.whoami.model.response.PlayerWithState;
 import com.eleks.academy.whoami.model.response.TurnDetails;
 import com.eleks.academy.whoami.service.GameService;
 import lombok.RequiredArgsConstructor;
@@ -45,11 +45,15 @@ public class GameController {
 				.orElseGet(() -> ResponseEntity.notFound().build());
 	}
 
+	@PostMapping("/{id}/enroll")
+	public PlayerWithState enrollToGame(@PathVariable("id") String id,
+										@RequestHeader(PLAYER) String player) {
+		return this.gameService.enrollToGame(id, player);
+	}
 
 	@PostMapping("/{id}/players")
-	public SynchronousPlayer enrollToGame(@PathVariable("id") String id,
-										  @RequestHeader(PLAYER) String player) {
-		return this.gameService.enrollToGame(id, player);
+	public List<PlayerWithState> showWaitingPlayers(@PathVariable("id") String id) {
+		return this.gameService.findReadyPlayersByGameId(id);
 	}
 
 	@PostMapping("/{id}/characters")
@@ -92,8 +96,6 @@ public class GameController {
 	public void answerQuestion(@PathVariable("id") String id,
 							   @RequestHeader(PLAYER) String player, @RequestBody Message message) {
 		this.gameService.answerQuestion(id, player, message.getMessage());
-
 	}
-
 
 }

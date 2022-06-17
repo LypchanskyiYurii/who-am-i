@@ -65,7 +65,6 @@ public class PersistentPlayer implements Player, SynchronousPlayer {
 
 	@Override
 	public void close() {
-
 	}
 
 	@Override

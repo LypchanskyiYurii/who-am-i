@@ -26,7 +26,7 @@ public class PersistentGame implements Game, SynchronousGame {
 	private final Lock turnLock = new ReentrantLock();
 	private final String id;
 	private final Integer maxPlayers;
-	private final List<SynchronousPlayer> players = new ArrayList<>();
+	private final List<PlayerWithState> players = new ArrayList<>();
 	private final Queue<GameState> turns = new LinkedBlockingQueue<>();
 
 	/**
@@ -40,7 +40,7 @@ public class PersistentGame implements Game, SynchronousGame {
 				Instant.now().toEpochMilli(),
 				Double.valueOf(Math.random() * 999).intValue());
 		this.maxPlayers = maxPlayers;
-		players.add(new PersistentPlayer(hostPlayer));
+		players.add(new PlayerWithState(new PersistentPlayer(hostPlayer), null, PlayerState.READY));
 	}
 
 	@Override
@@ -54,17 +54,18 @@ public class PersistentGame implements Game, SynchronousGame {
 	}
 
 	@Override
-	public Optional<SynchronousPlayer> enrollToGame(String player) {
-		SynchronousPlayer synchronousPlayer = null;
+	public Optional<PlayerWithState> enrollToGame(String player) {
+		PlayerWithState playerWithState = null;
 
-		if (this.getCountPlayers() < this.maxPlayers) {
-			synchronousPlayer = new PersistentPlayer(player);
-			this.players.add(synchronousPlayer);
+		if (this.getPlayersCount() < this.maxPlayers) {
+			playerWithState = new PlayerWithState(new PersistentPlayer(player), null, PlayerState.READY);
+			this.players.add(playerWithState);
 		} else {
 			GameState gameState = new SuggestingCharacters(this.players.stream()
-					.collect(Collectors.toMap(SynchronousPlayer::getName, Function.identity()));
+					.map(PlayerWithState::getPlayer)
+					.collect(Collectors.toMap(SynchronousPlayer::getName, Function.identity())));
 		}
-		return Optional.ofNullable(synchronousPlayer);
+		return Optional.ofNullable(playerWithState);
 	}
 
 	@Override
@@ -74,7 +75,6 @@ public class PersistentGame implements Game, SynchronousGame {
 
 	@Override
 	public void askQuestion(String player, String message) {
-
 	}
 
 	@Override
@@ -88,8 +88,8 @@ public class PersistentGame implements Game, SynchronousGame {
 	}
 
 	@Override
-	public Integer getCountPlayers() {
-		return players.size();
+	public Integer getPlayersCount() {
+		return this.players.size();
 	}
 
 	@Override
@@ -104,17 +104,13 @@ public class PersistentGame implements Game, SynchronousGame {
 
 	@Override
 	public List<PlayerWithState> getPlayersInGame() {
-		return this.players
-				.stream()
-				.map(player -> new PlayerWithState(player, null, PlayerState.READY))
-				.toList();
+		return this.players;
 	}
 
 	@Override
 	public boolean isFinished() {
 		return this.turns.isEmpty();
 	}
-
 
 	@Override
 	public boolean makeTurn() {
@@ -123,12 +119,10 @@ public class PersistentGame implements Game, SynchronousGame {
 
 	@Override
 	public void changeTurn() {
-
 	}
 
 	@Override
 	public void initGame() {
-
 	}
 
 	@Override

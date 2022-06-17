@@ -1,13 +1,12 @@
 package com.eleks.academy.whoami.service.impl;
 
 import com.eleks.academy.whoami.core.SynchronousGame;
-import com.eleks.academy.whoami.core.SynchronousPlayer;
 import com.eleks.academy.whoami.core.impl.PersistentGame;
-import com.eleks.academy.whoami.core.impl.PersistentPlayer;
 import com.eleks.academy.whoami.model.request.CharacterSuggestion;
 import com.eleks.academy.whoami.model.request.NewGameRequest;
 import com.eleks.academy.whoami.model.response.GameDetails;
 import com.eleks.academy.whoami.model.response.GameLight;
+import com.eleks.academy.whoami.model.response.PlayerWithState;
 import com.eleks.academy.whoami.model.response.TurnDetails;
 import com.eleks.academy.whoami.repository.GameRepository;
 import com.eleks.academy.whoami.service.GameService;
@@ -40,7 +39,7 @@ public class GameServiceImpl implements GameService {
 	}
 
 	@Override
-	public SynchronousPlayer enrollToGame(String id, String player) {
+	public PlayerWithState enrollToGame(String id, String player) {
 		return this.gameRepository.findById(id)
 				.filter(SynchronousGame::isAvailable)
 				.flatMap(game -> game.enrollToGame(player))
@@ -54,6 +53,11 @@ public class GameServiceImpl implements GameService {
 		return this.gameRepository.findById(id)
 				.filter(game -> game.findPlayer(player).isPresent())
 				.map(GameDetails::of);
+	}
+
+	@Override
+	public List<PlayerWithState> findReadyPlayersByGameId(String id) {
+		return this.gameRepository.findById(id).get().getPlayersInGame();
 	}
 
 	@Override
@@ -83,13 +87,10 @@ public class GameServiceImpl implements GameService {
 
 	@Override
 	public void submitGuess(String id, String player, String guess) {
-
 	}
 
 	@Override
 	public void answerQuestion(String id, String player, String answer) {
-
 	}
-
 
 }

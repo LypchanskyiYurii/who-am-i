@@ -1,10 +1,10 @@
 package com.eleks.academy.whoami.service;
 
-import com.eleks.academy.whoami.core.SynchronousPlayer;
 import com.eleks.academy.whoami.model.request.CharacterSuggestion;
 import com.eleks.academy.whoami.model.request.NewGameRequest;
 import com.eleks.academy.whoami.model.response.GameDetails;
 import com.eleks.academy.whoami.model.response.GameLight;
+import com.eleks.academy.whoami.model.response.PlayerWithState;
 import com.eleks.academy.whoami.model.response.TurnDetails;
 
 import java.util.List;
@@ -16,7 +16,7 @@ public interface GameService {
 
 	GameDetails createGame(String player, NewGameRequest gameRequest);
 
-	SynchronousPlayer enrollToGame(String id, String player);
+	PlayerWithState enrollToGame(String id, String player);
 
 	Optional<GameDetails> findByIdAndPlayer(String id, String player);
 
@@ -31,5 +31,7 @@ public interface GameService {
 	void submitGuess(String id, String player, String guess);
 
 	void answerQuestion(String id, String player, String answer);
+
+	List<PlayerWithState> findReadyPlayersByGameId(String id);
 
 }
