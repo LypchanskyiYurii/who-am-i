@@ -30,4 +30,6 @@ public interface SynchronousGame {
 
 	Integer getPlayersCount();
 
+	void deletePlayer(String player);
+
 }

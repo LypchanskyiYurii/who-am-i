@@ -93,6 +93,14 @@ public class PersistentGame implements Game, SynchronousGame {
 	}
 
 	@Override
+	public void deletePlayer(String player) {
+		Optional<PlayerWithState> playerToRemove = this.players.stream()
+				.filter((p) -> p.getPlayer().getName().equals(player))
+				.findFirst();
+		playerToRemove.ifPresent(this.players::remove);
+	}
+
+	@Override
 	public boolean isAvailable() {
 		return this.turns.peek() instanceof WaitingForPlayers;
 	}

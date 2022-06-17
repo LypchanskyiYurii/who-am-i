@@ -34,4 +34,6 @@ public interface GameService {
 
 	List<PlayerWithState> findReadyPlayersByGameId(String id);
 
+	void leaveGame(String id, String player);
+
 }

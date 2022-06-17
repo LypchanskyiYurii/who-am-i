@@ -98,4 +98,10 @@ public class GameController {
 		this.gameService.answerQuestion(id, player, message.getMessage());
 	}
 
+	@DeleteMapping("/{id}/leave")
+	public void leaveGame(@PathVariable("id") String id,
+						  @RequestHeader(PLAYER) String player) {
+		this.gameService.leaveGame(id, player);
+	}
+
 }

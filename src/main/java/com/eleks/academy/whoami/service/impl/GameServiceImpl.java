@@ -61,6 +61,11 @@ public class GameServiceImpl implements GameService {
 	}
 
 	@Override
+	public void leaveGame(String id, String player) {
+		this.gameRepository.findById(id).ifPresent(game -> game.deletePlayer(player));
+	}
+
+	@Override
 	public void suggestCharacter(String id, String player, CharacterSuggestion suggestion) {
 		this.gameRepository.findById(id)
 				.flatMap(game -> game.findPlayer(player))
