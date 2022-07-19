@@ -10,19 +10,23 @@ import java.util.*;
 @NoArgsConstructor
 public class HistoryChat {
     @Getter
-    private final Map<HistoryQuestion, HistoryQuestion> questions = new HashMap<>();
+    private final List<HistoryQuestion> questions = new ArrayList<>();
     private HistoryQuestion currentQuestion;
 
     public void addQuestion(String question, String player) {
         final var historyQuestion = new HistoryQuestion(player, question);
-        this.questions.put(historyQuestion, historyQuestion);
+        this.questions.add(historyQuestion);
         this.currentQuestion = historyQuestion;
     }
 
     public void addAnswer(String answer, String player) {
-        Optional.ofNullable(this.questions.get(this.currentQuestion))
+        this.questions
+                .stream()
+                .filter(question -> question.equals(this.currentQuestion))
+                .findAny()
                 .ifPresent(question -> question.addAnswer(answer, player));
     }
+
 }
 
 @Data
