@@ -15,7 +15,6 @@ import com.eleks.academy.whoami.repository.HistoryChat;
 
 import java.time.Instant;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import static com.eleks.academy.whoami.enums.Constants.PLAYER_NOT_FOUND;
