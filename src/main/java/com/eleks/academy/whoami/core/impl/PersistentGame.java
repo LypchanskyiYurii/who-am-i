@@ -116,9 +116,9 @@ public class PersistentGame {
         }
     }
 
-    public boolean areAllPlayersSuggested(){
-        for (var player : this.players){
-            if(!player.isSuggestStatus()){
+    public boolean areAllPlayersSuggested() {
+        for (var player : this.players) {
+            if (!player.isSuggestStatus()) {
                 return false;
             }
         }
@@ -283,8 +283,26 @@ public class PersistentGame {
             Collections.swap(availableCharacters, i, random.nextInt(i + 1));
         }
 
-        AtomicInteger a = new AtomicInteger();
-        players.forEach(randomPlayer -> randomPlayer.setCharacter(availableCharacters.get(a.getAndIncrement())));
+        for (int i = 0; i <= players.size() - 1; i++) {
+            int j = 0;
+            var player = players.get(i);
+            if (availableCharacters.size() == 1) {
+                if (player.getCharacter().equals(availableCharacters.get(j))) {
+                    int randomNum = (int) (Math.random() * players.size() - 1);
+                    player.setCharacter(players.get(randomNum).getCharacter());
+                    players.get(randomNum).setCharacter(availableCharacters.get(j));
+                } else {
+                    player.setCharacter(availableCharacters.get(j));
+                }
+            } else {
+                while (player.getCharacter().equals(availableCharacters.get(j)) && j < availableCharacters.size() - 1) {
+                    j++;
+                }
+                player.setCharacter(availableCharacters.get(j));
+            }
+            availableCharacters.remove(j);
+        }
+
     }
 
     private void cleanPlayersValues(List<PersistentPlayer> players) {
