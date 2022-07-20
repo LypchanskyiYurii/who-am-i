@@ -214,7 +214,7 @@ public class PersistentGame {
             askingPlayer.setEnteredQuestion(true);
             askingPlayer.setGuessing(true);
 
-            this.history.addQuestion(guess.getMessage(), playerId);
+            this.history.addQuestion("Guess: " + guess.getMessage(), playerId);
 
         } else {
             throw new TurnException("Not your turn! Current turn has player: " + getCurrentTurn().getNickname());
