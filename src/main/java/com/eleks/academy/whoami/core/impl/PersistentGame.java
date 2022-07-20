@@ -42,7 +42,7 @@ public class PersistentGame {
                 Double.valueOf(Math.random() * 999).intValue());
         this.players = new ArrayList<>(maxPlayers);
         this.maxPlayers = maxPlayers;
-        this.players.add(new PersistentPlayer(hostPlayer, id, "hostPlayer"));
+        this.players.add(new PersistentPlayer(hostPlayer, id, "Player-1"));
         this.turn = new TurnImpl(players);
     }
 
