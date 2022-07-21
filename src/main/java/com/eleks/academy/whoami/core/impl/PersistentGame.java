@@ -357,15 +357,10 @@ public class PersistentGame {
                 answerGuessingQuestion(playerId, QuestionAnswer.NOT_SURE);
             }
 
-            if (inactivePlayer.getInactiveCounter() == 3) {
-                deletePlayer(playerId);
-                return true;
-            }
+            return inactivePlayer.getInactiveCounter() == 3;
         } else {
-            deletePlayer(playerId);
             return true;
         }
-        return false;
     }
 
 }
