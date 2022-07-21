@@ -254,7 +254,7 @@ public class PersistentGame {
                     .filter(answer -> answer.equals(QuestionAnswer.NO))
                     .collect(Collectors.toList());
 
-            if (positiveAnswers.size() > negativeAnswers.size()) {
+            if (positiveAnswers.size() >= negativeAnswers.size()) {
                 //TODO: show "YOU WIN THE GAME!"
                 askingPlayer.setPlayerState(PlayerState.GAME_WINNER);
                 this.winners.add(askingPlayer);
@@ -357,15 +357,10 @@ public class PersistentGame {
                 answerGuessingQuestion(playerId, QuestionAnswer.NOT_SURE);
             }
 
-            if (inactivePlayer.getInactiveCounter() == 3) {
-                deletePlayer(playerId);
-                return true;
-            }
+            return inactivePlayer.getInactiveCounter() == 3;
         } else {
-            deletePlayer(playerId);
             return true;
         }
-        return false;
     }
 
 }

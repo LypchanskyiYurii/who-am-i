@@ -80,7 +80,7 @@ public class GameServiceImpl implements GameService {
         } else {
             throw new GameStateException("You cannot suggest the character! Current game state is: " + game.getStatus());
         }
-        if(game.areAllPlayersSuggested()){
+        if (game.areAllPlayersSuggested()) {
             startGame(gameId);
         }
     }
@@ -89,7 +89,7 @@ public class GameServiceImpl implements GameService {
     public Optional<GameDetails> startGame(String gameId) {
         PersistentGame game = checkGameExistence(gameId);
         switch (game.getStatus()) {
-            
+
             case GAME_IN_PROGRESS -> throw new GameStateException("Game already in progress! Find another one to play!");
 
             case READY_TO_PLAY -> {
@@ -163,9 +163,9 @@ public class GameServiceImpl implements GameService {
     public void leaveGame(String gameId, String playerId) {
         PersistentGame game = checkGameExistence(gameId);
         game.deletePlayer(playerId);
-        if(game.getPLayers().isEmpty())
+        if (game.getPLayers().size() <= 3 && !game.getStatus().equals(GameStatus.GAME_IN_PROGRESS))
             this.gameRepository.deleteGame(gameId);
-        if(game.getPLayers().size() <= 3)
+        if(game.getPLayers().size() == 1)
             this.gameRepository.deleteGame(gameId);
     }
 
@@ -203,7 +203,11 @@ public class GameServiceImpl implements GameService {
     @Override
     public boolean inactivePlayer(String gameId, String playerId) {
         PersistentGame game = checkGameExistence(gameId);
-        return game.inactivePlayer(playerId);
+        if (game.inactivePlayer(playerId)) {
+            leaveGame(gameId, playerId);
+            return true;
+        }
+        return false;
     }
 
 }
