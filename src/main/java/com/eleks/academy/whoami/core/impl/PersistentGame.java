@@ -83,6 +83,12 @@ public class PersistentGame {
         return turn.getCurrentPlayer();
     }
 
+    public List <PersistentPlayer> getOrderedPlayers(){
+        return Optional.ofNullable(this.turn)
+                .map(Turn::getAllPlayers)
+                .orElse(this.players);
+    }
+
     public PlayerDetails enrollToGame(String playerId) {
         PersistentPlayer player;
         if (players.stream().noneMatch((randomPlayer -> randomPlayer.getId().equals(playerId)))) {

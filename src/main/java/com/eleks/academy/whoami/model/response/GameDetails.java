@@ -24,7 +24,7 @@ public class GameDetails {
     public GameDetails(PersistentGame game) {
         this.id = game.getGameId();
         this.status = game.getStatus();
-        this.players = game.getPLayers();
+        this.players = game.getOrderedPlayers();
         this.winners = game.getWinnerList();
     }
 
