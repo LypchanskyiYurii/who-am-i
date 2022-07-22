@@ -194,6 +194,11 @@ public class PersistentGame {
                     .filter(answer -> answer.equals(QuestionAnswer.YES))
                     .collect(Collectors.toList());
 
+            positiveAnswers = playersAnswers
+                    .stream()
+                    .filter(answer -> answer.equals(QuestionAnswer.DONT_KNOW))
+                    .collect(Collectors.toList());
+
             var negativeAnswers = playersAnswers
                     .stream()
                     .filter(answer -> answer.equals(QuestionAnswer.NO))
