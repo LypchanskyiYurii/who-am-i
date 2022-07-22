@@ -252,7 +252,7 @@ public class PersistentGame {
         if (playersAnswers.size() == this.players.size() - 1) {
             var afkAnswers = playersAnswers
                     .stream()
-                    .filter(answer -> answer.equals(QuestionAnswer.NOT_SURE))
+                    .filter(answer -> answer.equals(QuestionAnswer.DONT_KNOW))
                     .collect(Collectors.toList());
 
             if (afkAnswers.size() != playersAnswers.size()) {
@@ -368,9 +368,9 @@ public class PersistentGame {
             inactivePlayer.incrementInactiveCounter();
 
             if (this.turn.getCurrentPlayer().getPlayerState().equals(PlayerState.ASK_QUESTION)) {
-                answerQuestion(playerId, QuestionAnswer.NOT_SURE);
+                answerQuestion(playerId, QuestionAnswer.DONT_KNOW);
             } else if (this.turn.getCurrentPlayer().getPlayerState().equals(PlayerState.GUESSING)) {
-                answerGuessingQuestion(playerId, QuestionAnswer.NOT_SURE);
+                answerGuessingQuestion(playerId, QuestionAnswer.DONT_KNOW);
             }
 
             return inactivePlayer.getInactiveCounter() == 3;
