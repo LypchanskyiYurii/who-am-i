@@ -244,23 +244,33 @@ public class PersistentGame {
         }
 
         if (playersAnswers.size() == this.players.size() - 1) {
-            var positiveAnswers = playersAnswers
+            var afkAnswers = playersAnswers
                     .stream()
-                    .filter(answer -> answer.equals(QuestionAnswer.YES))
+                    .filter(answer -> answer.equals(QuestionAnswer.NOT_SURE))
                     .collect(Collectors.toList());
 
-            var negativeAnswers = playersAnswers
-                    .stream()
-                    .filter(answer -> answer.equals(QuestionAnswer.NO))
-                    .collect(Collectors.toList());
+            if (afkAnswers.size() != playersAnswers.size()) {
+                var positiveAnswers = playersAnswers
+                        .stream()
+                        .filter(answer -> answer.equals(QuestionAnswer.YES))
+                        .collect(Collectors.toList());
 
-            if (positiveAnswers.size() >= negativeAnswers.size()) {
-                //TODO: show "YOU WIN THE GAME!"
-                askingPlayer.setPlayerState(PlayerState.GAME_WINNER);
-                this.winners.add(askingPlayer);
-                deletePlayer(askingPlayer.getId());
+                var negativeAnswers = playersAnswers
+                        .stream()
+                        .filter(answer -> answer.equals(QuestionAnswer.NO))
+                        .collect(Collectors.toList());
+
+                if (positiveAnswers.size() >= negativeAnswers.size()) {
+                    //TODO: show "YOU WIN THE GAME!"
+                    askingPlayer.setPlayerState(PlayerState.GAME_WINNER);
+                    this.winners.add(askingPlayer);
+                    deletePlayer(askingPlayer.getId());
+                }
+                this.turn = this.turn.changeTurn();
             }
-            this.turn = this.turn.changeTurn();
+            else{
+                askingPlayer.setPlayerState(PlayerState.ASK_QUESTION);
+            }
         }
 
     }
