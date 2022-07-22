@@ -11,27 +11,26 @@ import java.util.stream.Collectors;
 
 public class TurnImpl implements Turn {
 
-    private List<PersistentPlayer> players;
+    private final List<PersistentPlayer> players;
     private final List<QuestionAnswer> playersAnswers = new ArrayList<>();
     private PersistentPlayer currentPlayer;
     private Queue<PersistentPlayer> orderedPlayers;
 
     public TurnImpl(List<PersistentPlayer> players) {
-        this.players = players;
-
-        Function<PersistentPlayer, Integer> randomAuthorOrderComparator = value ->
+        Function<PersistentPlayer, Integer> randomComparator = value ->
                 Double.valueOf(Math.random() * 1000).intValue();
 
-        this.orderedPlayers =
-                this.players
-                        .stream()
-                        .sorted(Comparator.comparing(randomAuthorOrderComparator))
-                        .collect(Collectors.toCollection(LinkedList::new));
+        this.players = players
+                .stream()
+                .sorted(Comparator.comparing(randomComparator))
+                .collect(Collectors.toList());
+
+        this.orderedPlayers = new LinkedList<>(this.players);
 
         this.currentPlayer = this.orderedPlayers.poll();
     }
 
-    public TurnImpl(List<PersistentPlayer> players, Queue<PersistentPlayer> orderedPlayers) {
+    private TurnImpl(List<PersistentPlayer> players, Queue<PersistentPlayer> orderedPlayers) {
         this.players = players;
         this.orderedPlayers = orderedPlayers;
 
