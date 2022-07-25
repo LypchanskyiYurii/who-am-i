@@ -115,14 +115,14 @@ public class GameController {
 
     @GetMapping("/{id}/answer/getAnswer")
     public String getCurrentAnswer(@PathVariable("id") String id,
-                                     @RequestHeader(PLAYER) String player) {
+                                   @RequestHeader(PLAYER) String player) {
         return this.gameService.getCurrentAnswer(id, player);
     }
 
     @PostMapping("/{id}/inactivePlayer")
     public boolean inactivePlayer(@PathVariable("id") String id,
-                                                           @RequestHeader(PLAYER) String player){
-        return this.gameService.inactivePlayer(id,player);
+                                  @RequestHeader(PLAYER) String player) {
+        return this.gameService.inactivePlayer(id, player);
     }
 
 }
