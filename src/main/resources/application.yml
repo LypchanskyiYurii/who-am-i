@@ -6,12 +6,3 @@ server:
 game:
   port: 2000
   players: 4
-
-spring:
-  datasource:
-    url: jdbc:postgresql:whoami
-    username: postgres
-    password: postgres
-  jpa:
-    hibernate:
-      ddl-auto: validate
