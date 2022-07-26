@@ -191,12 +191,7 @@ public class PersistentGame {
         if (playersAnswers.size() == players.size() - 1) {
             var positiveAnswers = playersAnswers
                     .stream()
-                    .filter(answer -> answer.equals(QuestionAnswer.YES))
-                    .collect(Collectors.toList());
-
-            positiveAnswers = playersAnswers
-                    .stream()
-                    .filter(answer -> answer.equals(QuestionAnswer.DONT_KNOW))
+                    .filter(answer -> answer.equals(QuestionAnswer.YES) || answer.equals(QuestionAnswer.DONT_KNOW))
                     .collect(Collectors.toList());
 
             var negativeAnswers = playersAnswers
@@ -296,11 +291,13 @@ public class PersistentGame {
                     .findFirst()
                     .orElseThrow(() -> new PlayerNotFoundException(String.format(PLAYER_NOT_FOUND, playerId)));
 
-            if (leavingPlayer.getPlayerState().equals(PlayerState.ANSWER_QUESTION)) {
-                answerQuestion(playerId, QuestionAnswer.DONT_KNOW);
-            }
-            if (leavingPlayer.getPlayerState().equals(PlayerState.ANSWER_GUESS)) {
-                answerGuessingQuestion(playerId, QuestionAnswer.DONT_KNOW);
+            if(!leavingPlayer.isEnteredAnswer()) {
+                if (leavingPlayer.getPlayerState().equals(PlayerState.ANSWER_QUESTION)) {
+                    answerQuestion(playerId, QuestionAnswer.DONT_KNOW);
+                }
+                if (leavingPlayer.getPlayerState().equals(PlayerState.ANSWER_GUESS)) {
+                    answerGuessingQuestion(playerId, QuestionAnswer.DONT_KNOW);
+                }
             }
         }
 
