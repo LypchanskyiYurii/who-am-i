@@ -38,6 +38,10 @@ public class TurnImpl implements Turn {
             throw new TurnException("No players left");
         }
         this.currentPlayer = this.orderedPlayers.poll();
+        this.orderedPlayers.stream()
+                    .filter(randomPlayer -> !randomPlayer.getId().equals(currentPlayer.getId()))
+                    .forEach(randomPlayer -> randomPlayer.setPlayerState(PlayerState.ANSWER_QUESTION));
+
         if (currentPlayer != null) {
             currentPlayer.setPlayerState(PlayerState.ASK_QUESTION);
         }

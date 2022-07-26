@@ -83,7 +83,7 @@ public class PersistentGame {
         return turn.getCurrentPlayer();
     }
 
-    public List <PersistentPlayer> getOrderedPlayers(){
+    public List<PersistentPlayer> getOrderedPlayers() {
         return Optional.ofNullable(this.turn)
                 .map(Turn::getAllPlayers)
                 .orElse(this.players);
@@ -225,6 +225,10 @@ public class PersistentGame {
             askingPlayer.setEnteredQuestion(true);
             askingPlayer.setGuessing(true);
 
+            this.players.stream()
+                    .filter(randomPlayer -> !randomPlayer.getId().equals(askingPlayer.getId()))
+                    .forEach(randomPlayer -> randomPlayer.setPlayerState(PlayerState.ANSWER_GUESS));
+
             this.history.addQuestion("Guess: " + guess.getMessage(), playerId);
 
         } else {
@@ -246,7 +250,7 @@ public class PersistentGame {
 
         var playersAnswers = turn.getPlayersAnswers();
 
-        if (answeringPlayer.getPlayerState().equals(PlayerState.ANSWER_QUESTION)) {
+        if (answeringPlayer.getPlayerState().equals(PlayerState.ANSWER_GUESS)) {
             playersAnswers.add(askQuestion);
             answeringPlayer.setEnteredAnswer(true);
             answeringPlayer.setPlayerAnswer(String.valueOf(askQuestion));
@@ -272,14 +276,12 @@ public class PersistentGame {
                         .collect(Collectors.toList());
 
                 if (positiveAnswers.size() >= negativeAnswers.size()) {
-                    //TODO: show "YOU WIN THE GAME!"
                     askingPlayer.setPlayerState(PlayerState.GAME_WINNER);
                     this.winners.add(askingPlayer);
                     deletePlayer(askingPlayer.getId());
                 }
                 this.turn = this.turn.changeTurn();
-            }
-            else{
+            } else {
                 askingPlayer.setPlayerState(PlayerState.ASK_QUESTION);
             }
         }
@@ -287,6 +289,21 @@ public class PersistentGame {
     }
 
     public void deletePlayer(String playerId) {
+        if (gameStatus.equals(GameStatus.GAME_IN_PROGRESS)) {
+            var leavingPlayer = this.players
+                    .stream()
+                    .filter(player -> player.getId().equals(playerId))
+                    .findFirst()
+                    .orElseThrow(() -> new PlayerNotFoundException(String.format(PLAYER_NOT_FOUND, playerId)));
+
+            if (leavingPlayer.getPlayerState().equals(PlayerState.ANSWER_QUESTION)) {
+                answerQuestion(playerId, QuestionAnswer.DONT_KNOW);
+            }
+            if (leavingPlayer.getPlayerState().equals(PlayerState.ANSWER_GUESS)) {
+                answerGuessingQuestion(playerId, QuestionAnswer.DONT_KNOW);
+            }
+        }
+
         this.players.removeIf(player -> player.getId().equals(playerId));
         this.turn.removePLayer(playerId);
     }
