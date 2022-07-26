@@ -28,7 +28,8 @@ public class PersistentGame {
     private final List<PersistentPlayer> winners = new LinkedList<>();
     private Turn turn;
     private final HistoryChat history = new HistoryChat();
-
+    private int playersLeft;
+    private final List<QuestionAnswer> playersAnswers = new ArrayList<>();
 
     /**
      * Creates a new game (game room) and makes a first enrolment turn by a current player
@@ -44,6 +45,7 @@ public class PersistentGame {
         this.maxPlayers = maxPlayers;
         this.players.add(new PersistentPlayer(hostPlayer, id, "Player-1"));
         this.turn = new TurnImpl(players);
+        this.playersLeft = maxPlayers;
     }
 
     public String getGameId() {
@@ -177,26 +179,18 @@ public class PersistentGame {
             throw new TurnException("Not your turn for answering");
         }
 
-        var playersAnswers = turn.getPlayersAnswers();
-
         if (answeringPlayer.getPlayerState().equals(PlayerState.ANSWER_QUESTION)) {
             playersAnswers.add(questionAnswer);
             answeringPlayer.setEnteredAnswer(true);
             answeringPlayer.setPlayerAnswer(String.valueOf(questionAnswer));
 
             this.history.addAnswer(questionAnswer.toString(), playerId);
-
         }
 
-        if (playersAnswers.size() == players.size() - 1) {
+        if (playersAnswers.size() == this.playersLeft - 1) {
             var positiveAnswers = playersAnswers
                     .stream()
-                    .filter(answer -> answer.equals(QuestionAnswer.YES))
-                    .collect(Collectors.toList());
-
-            positiveAnswers = playersAnswers
-                    .stream()
-                    .filter(answer -> answer.equals(QuestionAnswer.DONT_KNOW))
+                    .filter(answer -> answer.equals(QuestionAnswer.YES) || answer.equals(QuestionAnswer.DONT_KNOW))
                     .collect(Collectors.toList());
 
             var negativeAnswers = playersAnswers
@@ -207,6 +201,8 @@ public class PersistentGame {
             if (positiveAnswers.size() < negativeAnswers.size()) {
                 this.turn = this.turn.changeTurn();
             }
+            this.playersAnswers.clear();
+            this.playersLeft = this.players.size();
         }
     }
 
@@ -248,8 +244,6 @@ public class PersistentGame {
             throw new TurnException("Not your turn for answering");
         }
 
-        var playersAnswers = turn.getPlayersAnswers();
-
         if (answeringPlayer.getPlayerState().equals(PlayerState.ANSWER_GUESS)) {
             playersAnswers.add(askQuestion);
             answeringPlayer.setEnteredAnswer(true);
@@ -258,7 +252,7 @@ public class PersistentGame {
             this.history.addAnswer(askQuestion.toString(), playerId);
         }
 
-        if (playersAnswers.size() == this.players.size() - 1) {
+        if (playersAnswers.size() == this.playersLeft - 1) {
             var afkAnswers = playersAnswers
                     .stream()
                     .filter(answer -> answer.equals(QuestionAnswer.DONT_KNOW))
@@ -284,8 +278,9 @@ public class PersistentGame {
             } else {
                 askingPlayer.setPlayerState(PlayerState.ASK_QUESTION);
             }
+            this.playersAnswers.clear();
+            this.playersLeft = this.players.size();
         }
-
     }
 
     public void deletePlayer(String playerId) {
@@ -296,11 +291,13 @@ public class PersistentGame {
                     .findFirst()
                     .orElseThrow(() -> new PlayerNotFoundException(String.format(PLAYER_NOT_FOUND, playerId)));
 
-            if (leavingPlayer.getPlayerState().equals(PlayerState.ANSWER_QUESTION)) {
-                answerQuestion(playerId, QuestionAnswer.DONT_KNOW);
-            }
-            if (leavingPlayer.getPlayerState().equals(PlayerState.ANSWER_GUESS)) {
-                answerGuessingQuestion(playerId, QuestionAnswer.DONT_KNOW);
+            if (!leavingPlayer.isEnteredAnswer() && !leavingPlayer.isEnteredQuestion()) {
+                if (leavingPlayer.getPlayerState().equals(PlayerState.ANSWER_QUESTION)) {
+                    answerQuestion(playerId, QuestionAnswer.DONT_KNOW);
+                }
+                if (leavingPlayer.getPlayerState().equals(PlayerState.ANSWER_GUESS)) {
+                    answerGuessingQuestion(playerId, QuestionAnswer.DONT_KNOW);
+                }
             }
         }
 
