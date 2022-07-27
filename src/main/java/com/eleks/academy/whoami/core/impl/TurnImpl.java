@@ -3,7 +3,6 @@ package com.eleks.academy.whoami.core.impl;
 import com.eleks.academy.whoami.core.Turn;
 import com.eleks.academy.whoami.core.exception.TurnException;
 import com.eleks.academy.whoami.enums.PlayerState;
-import com.eleks.academy.whoami.enums.QuestionAnswer;
 
 import java.util.*;
 import java.util.function.Function;
@@ -12,7 +11,6 @@ import java.util.stream.Collectors;
 public class TurnImpl implements Turn {
 
     private final List<PersistentPlayer> players;
-    private final List<QuestionAnswer> playersAnswers = new ArrayList<>();
     private PersistentPlayer currentPlayer;
     private Queue<PersistentPlayer> orderedPlayers;
 
@@ -38,10 +36,6 @@ public class TurnImpl implements Turn {
             throw new TurnException("No players left");
         }
         this.currentPlayer = this.orderedPlayers.poll();
-        this.orderedPlayers.stream()
-                    .filter(randomPlayer -> !randomPlayer.getId().equals(currentPlayer.getId()))
-                    .forEach(randomPlayer -> randomPlayer.setPlayerState(PlayerState.ANSWER_QUESTION));
-
         if (currentPlayer != null) {
             currentPlayer.setPlayerState(PlayerState.ASK_QUESTION);
         }
@@ -58,24 +52,12 @@ public class TurnImpl implements Turn {
     }
 
     @Override
-    public List<QuestionAnswer> getPlayersAnswers() {
-        if (playersAnswers.size() == players.size() - 1) {
-            playersAnswers.clear();
-        }
-        return playersAnswers;
-    }
-
-    @Override
     public List<PersistentPlayer> getAllPlayers() {
         return players;
     }
 
     public List<PersistentPlayer> getPlayers() {
         return players;
-    }
-
-    public void setPlayersAnswers(QuestionAnswer answer) {
-        playersAnswers.add(answer);
     }
 
     @Override
