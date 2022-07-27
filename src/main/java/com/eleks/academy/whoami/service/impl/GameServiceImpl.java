@@ -13,7 +13,7 @@ import com.eleks.academy.whoami.model.response.GameDetails;
 import com.eleks.academy.whoami.model.response.PlayerDetails;
 import com.eleks.academy.whoami.model.response.TurnDetails;
 import com.eleks.academy.whoami.repository.GameRepository;
-import com.eleks.academy.whoami.repository.HistoryChat;
+import com.eleks.academy.whoami.core.impl.HistoryChat;
 import com.eleks.academy.whoami.service.GameService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -144,7 +144,7 @@ public class GameServiceImpl implements GameService {
         if (game.getStatus().equals(GameStatus.GAME_IN_PROGRESS)) {
             game.answerGuessingQuestion(playerId, answerQuess);
         }
-        if(game.getPLayers().size() == 1){
+        if (game.getPLayers().size() == 1) {
             this.gameRepository.deleteGame(gameId);
         }
     }
@@ -168,7 +168,7 @@ public class GameServiceImpl implements GameService {
         game.deletePlayer(playerId);
         if (game.getPLayers().size() <= 3 && !game.getStatus().equals(GameStatus.GAME_IN_PROGRESS))
             this.gameRepository.deleteGame(gameId);
-        if(game.getPLayers().size() == 1)
+        if (game.getPLayers().size() == 1)
             this.gameRepository.deleteGame(gameId);
     }
 

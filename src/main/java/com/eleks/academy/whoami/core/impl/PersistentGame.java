@@ -11,7 +11,6 @@ import com.eleks.academy.whoami.model.request.CharacterSuggestion;
 import com.eleks.academy.whoami.model.request.Message;
 import com.eleks.academy.whoami.model.response.PlayerDetails;
 import com.eleks.academy.whoami.model.response.TurnDetails;
-import com.eleks.academy.whoami.repository.HistoryChat;
 
 import java.time.Instant;
 import java.util.*;
@@ -277,10 +276,10 @@ public class PersistentGame {
                     askingPlayer.setPlayerState(PlayerState.GAME_WINNER);
                     this.winners.add(askingPlayer);
                     deletePlayer(askingPlayer.getId());
-                    if(this.players.size() == 1){
+                    if (this.players.size() == 1) {
                         players.get(0).setPlayerState(PlayerState.GAME_LOOSER);
                     }
-                } else{
+                } else {
                     this.turn = this.turn.changeTurn();
                 }
             } else {
