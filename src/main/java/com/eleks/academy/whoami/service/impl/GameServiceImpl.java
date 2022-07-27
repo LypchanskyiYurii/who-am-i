@@ -13,7 +13,7 @@ import com.eleks.academy.whoami.model.response.GameDetails;
 import com.eleks.academy.whoami.model.response.PlayerDetails;
 import com.eleks.academy.whoami.model.response.TurnDetails;
 import com.eleks.academy.whoami.repository.GameRepository;
-import com.eleks.academy.whoami.repository.HistoryChat;
+import com.eleks.academy.whoami.core.impl.HistoryChat;
 import com.eleks.academy.whoami.service.GameService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

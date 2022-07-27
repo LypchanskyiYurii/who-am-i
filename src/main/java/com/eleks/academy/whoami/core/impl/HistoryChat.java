@@ -1,4 +1,4 @@
-package com.eleks.academy.whoami.repository;
+package com.eleks.academy.whoami.core.impl;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -54,5 +54,4 @@ class HistoryQuestion {
 class HistoryAnswer {
     private String player;
     private String answer;
-
 }
