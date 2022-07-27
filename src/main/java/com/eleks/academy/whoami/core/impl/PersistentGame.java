@@ -159,6 +159,10 @@ public class PersistentGame {
             askingPlayer.setPlayerQuestion(message);
             askingPlayer.setEnteredQuestion(true);
 
+            this.players.stream()
+                    .filter(randomPlayer -> !randomPlayer.getId().equals(askingPlayer.getId()))
+                    .forEach(randomPlayer -> randomPlayer.setPlayerState(PlayerState.ANSWER_QUESTION));
+
             this.history.addQuestion(message, playerId);
 
         } else {
@@ -273,8 +277,12 @@ public class PersistentGame {
                     askingPlayer.setPlayerState(PlayerState.GAME_WINNER);
                     this.winners.add(askingPlayer);
                     deletePlayer(askingPlayer.getId());
+                    if(this.players.size() == 1){
+                        players.get(0).setPlayerState(PlayerState.GAME_LOOSER);
+                    }
+                } else{
+                    this.turn = this.turn.changeTurn();
                 }
-                this.turn = this.turn.changeTurn();
             } else {
                 askingPlayer.setPlayerState(PlayerState.ASK_QUESTION);
             }
