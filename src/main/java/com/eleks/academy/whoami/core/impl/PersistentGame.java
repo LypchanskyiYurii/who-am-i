@@ -405,4 +405,13 @@ public class PersistentGame {
         }
     }
 
+
+    public void makingWinner(String afkPlayerId) {
+        for (var player : this.players) {
+            if (!player.getId().equals(afkPlayerId)) {
+                player.setPlayerState(PlayerState.GAME_WINNER);
+            }
+        }
+    }
+
 }
