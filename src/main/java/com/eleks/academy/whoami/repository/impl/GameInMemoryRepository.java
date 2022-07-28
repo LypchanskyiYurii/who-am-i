@@ -45,6 +45,11 @@ public class GameInMemoryRepository implements GameRepository {
 
     @Override
     public void deleteGame(String gameId) {
+        try {
+            Thread.sleep(5_000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         this.games.removeIf(game -> game.getGameId().equals(gameId));
     }
 
