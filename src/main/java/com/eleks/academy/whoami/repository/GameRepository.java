@@ -17,4 +17,6 @@ public interface GameRepository {
 
     void deleteGame(String gameId);
 
+    void quickDeleteGame(String gameId);
+
 }
