@@ -46,7 +46,7 @@ public class GameInMemoryRepository implements GameRepository {
     @Override
     public void deleteGame(String gameId) {
         try {
-            Thread.sleep(60_000);
+            Thread.sleep(10_000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
