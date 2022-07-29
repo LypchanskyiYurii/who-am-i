@@ -165,10 +165,13 @@ public class GameServiceImpl implements GameService {
     @Override
     public void leaveGame(String gameId, String playerId) {
         PersistentGame game = checkGameExistence(gameId);
+        if (game.getPLayers().size() == 2) {
+            game.makingWinner(playerId);
+        }
         game.deletePlayer(playerId);
-        if (game.getPLayers().size() <= 3 && !game.getStatus().equals(GameStatus.GAME_IN_PROGRESS))
+        if (game.getPLayers().size() <= 3 && !game.getStatus().equals(GameStatus.GAME_IN_PROGRESS) && !game.getStatus().equals(GameStatus.WAITING_FOR_PLAYERS))
             this.gameRepository.quickDeleteGame(gameId);
-        if (game.getPLayers().size() == 1)
+        if (game.getPLayers().size() == 1 && !game.getStatus().equals(GameStatus.WAITING_FOR_PLAYERS))
             this.gameRepository.deleteGame(gameId);
     }
 
@@ -207,9 +210,6 @@ public class GameServiceImpl implements GameService {
     public boolean inactivePlayer(String gameId, String playerId) {
         PersistentGame game = checkGameExistence(gameId);
         if (game.inactivePlayer(playerId)) {
-            if (game.getPLayers().size() == 2) {
-                game.makingWinner(playerId);
-            }
             leaveGame(gameId, playerId);
             return true;
         }
