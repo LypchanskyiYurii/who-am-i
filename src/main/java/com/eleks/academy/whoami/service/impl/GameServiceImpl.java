@@ -207,6 +207,11 @@ public class GameServiceImpl implements GameService {
     public boolean inactivePlayer(String gameId, String playerId) {
         PersistentGame game = checkGameExistence(gameId);
         if (game.inactivePlayer(playerId)) {
+            if (game.inactivePlayer(playerId)) {
+                if (game.getPLayers().size() == 2) {
+                    game.makingWinner(playerId);
+                }
+            }
             leaveGame(gameId, playerId);
             return true;
         }
