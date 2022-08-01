@@ -44,6 +44,16 @@ public class UserService {
         return toUserResponseDto(user);
     }
 
+    @Transactional
+    public UserResponseDto update(Long id, UserRequestDto userRequestDto) {
+        User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(String.format(USER_NOT_FOUND_MSG, id)));
+        user.setEmail(userRequestDto.getEmail());
+        user.setUsername(userRequestDto.getNickname());
+
+        User updatedUser = userRepository.save(user);
+        return toUserResponseDto(updatedUser);
+    }
+
     public void deleteById(Long userId) {
         userRepository.deleteById(userId);
     }
