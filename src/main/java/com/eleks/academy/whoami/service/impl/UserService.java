@@ -1,6 +1,7 @@
 package com.eleks.academy.whoami.service.impl;
 
 import com.eleks.academy.whoami.core.exception.UserAlreadyExistsException;
+import com.eleks.academy.whoami.core.exception.UserNotFoundException;
 import com.eleks.academy.whoami.dmo.User;
 import com.eleks.academy.whoami.model.request.UserRequestDto;
 import com.eleks.academy.whoami.model.response.UserResponseDto;
@@ -13,6 +14,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class UserService {
+
+    private static final String USER_NOT_FOUND_MSG = "User with id = %s not found";
 
     private final UserRepository userRepository;
 
@@ -34,6 +37,25 @@ public class UserService {
 
         User createdUser = userRepository.save(user);
         return toUserResponseDto(createdUser);
+    }
+
+    public UserResponseDto get(Long id) {
+        User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(String.format(USER_NOT_FOUND_MSG, id)));
+        return toUserResponseDto(user);
+    }
+
+    @Transactional
+    public UserResponseDto update(Long id, UserRequestDto userRequestDto) {
+        User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(String.format(USER_NOT_FOUND_MSG, id)));
+        user.setEmail(userRequestDto.getEmail());
+        user.setUsername(userRequestDto.getNickname());
+
+        User updatedUser = userRepository.save(user);
+        return toUserResponseDto(updatedUser);
+    }
+
+    public void deleteById(Long userId) {
+        userRepository.deleteById(userId);
     }
 
     private UserResponseDto toUserResponseDto(User user) {
