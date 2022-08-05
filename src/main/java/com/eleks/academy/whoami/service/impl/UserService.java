@@ -7,6 +7,8 @@ import com.eleks.academy.whoami.model.request.UserRequestDto;
 import com.eleks.academy.whoami.model.response.UserResponseDto;
 import com.eleks.academy.whoami.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,6 +44,10 @@ public class UserService {
     public UserResponseDto get(Long id) {
         User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(String.format(USER_NOT_FOUND_MSG, id)));
         return toUserResponseDto(user);
+    }
+
+    public Page<UserResponseDto> getAll(Pageable pageable) {
+        return userRepository.findAll(pageable).map(this::toUserResponseDto);
     }
 
     @Transactional

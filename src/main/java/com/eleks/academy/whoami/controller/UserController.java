@@ -4,6 +4,9 @@ import com.eleks.academy.whoami.model.request.UserRequestDto;
 import com.eleks.academy.whoami.model.response.UserResponseDto;
 import com.eleks.academy.whoami.service.impl.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -35,6 +38,13 @@ public class UserController {
     @DeleteMapping("/{userId}")
     public void deleteById(@PathVariable("userId") Long userId) {
         userService.deleteById(userId);
+    }
+
+    @GetMapping
+    public ResponseEntity<Page<UserResponseDto>> getAll(@RequestParam(value = "page", required = false, defaultValue = "0") int page,
+                                                        @RequestParam(value = "size", required = false, defaultValue = "10") int size) {
+        Pageable paging = PageRequest.of(page, size);
+        return ResponseEntity.ok(userService.getAll(paging));
     }
 
 }
